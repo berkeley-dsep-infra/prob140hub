@@ -33,7 +33,7 @@ function build {
 	PUSH=''
 	if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
 		PUSH='--push'
-		# Assume we're in master and have secrets!
+		# Assume we have secrets!
 		docker login -u $DOCKER_USERNAME -p "$DOCKER_PASSWORD"
 	fi
 
@@ -61,7 +61,8 @@ function deploy {
 		--key-file hub/secrets/gcloud-creds.json
 	gcloud config set project ${GCLOUD_PROJECT}
 
-	gcloud container clusters get-credentials ${CLUSTER}
+	gcloud container clusters get-credentials --zone=${GCLOUD_ZONE} \
+		${CLUSTER}
 
 	./deploy.py deploy ${TRAVIS_BRANCH}
 

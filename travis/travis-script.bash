@@ -42,12 +42,11 @@ elif [[ ${ACTION} == 'deploy' ]]; then
     REMOTE_CHECKOUT_DIR="/tmp/${TRAVIS_BUILD_NUMBER}"
     COMMIT="${TRAVIS_COMMIT}"
     MASTER_HOST="datahub-fa17-${TRAVIS_BRANCH}.westus2.cloudapp.azure.com"
-	GCLOUD_CREDS="prob140/secrets/gcloud-creds.json"
+	GCLOUD_CREDS="hub/secrets/gcloud-creds.json"
 
 	prepare_gcloud
     
     echo "Fetching gcloud service account credentials..."
-    # Travis only allows encrypting one file per repo. LAME
 	openssl aes-256-cbc \
 		-K $encrypted_b00c78b73ea7_key \
 		-iv $encrypted_b00c78b73ea7_iv \

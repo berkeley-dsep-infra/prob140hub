@@ -5,13 +5,14 @@
 # - DOCKER_USERNAME
 # - DOCKER_PASSWORD
 # - GCLOUD_PROJECT
+# - HUB_COURSE
 # travis project env vars:
 # - encrypted_b00c78b73ea7_key (created by 'travis encrypt-file')
 # - encrypted_b00c78b73ea7_iv  (created by 'travis encrypt-file')
 
 set -euo pipefail
 
-CLUSTER="prob140-${TRAVIS_BRANCH}"
+CLUSTER="${HUB_COURSE}-${TRAVIS_BRANCH}"
 
 openssl_key=${encrypted_b00c78b73ea7_key}
 openssl_iv=${encrypted_b00c78b73ea7_iv}

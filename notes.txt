@@ -1,0 +1,38 @@
+# vim: set nonumber:
+
+gcloud container clusters create prob140-staging \
+    --num-nodes=3 \
+    --machine-type=n1-standard-2 \
+    --zone=us-central1-a \
+    --cluster-version=1.8.4-gke.0
+
+
+kubectl create clusterrolebinding cluster-admin-binding \
+	--clusterrole=cluster-admin \
+	--user=rylo@berkeley.edu
+
+kubectl --namespace kube-system create sa tiller
+
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin \
+	--serviceaccount=kube-system:tiller
+
+helm init --service-account tiller
+
+helm version
+
+kubectl --namespace=kube-system patch deployment tiller-deploy --type=json \
+	--patch='[{"op": "add", "path": "/spec/template/spec/containers/0/command", "value": ["/tiller", "--listen=localhost:44134"]}]'
+
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+helm repo update
+
+
+
+helm install jupyterhub/jupyterhub \
+    --version=v0.5 \
+    --name=staging \
+    --namespace=staging \
+    -f config.yaml
+
+
+helm upgrade staging jupyterhub/jupyterhub --version=v0.5 -f config.yaml

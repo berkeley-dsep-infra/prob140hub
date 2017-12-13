@@ -69,7 +69,7 @@ def build_user_image(image_name, commit_range=None, push=False):
         ])
     print('build completed for image', image_spec)
 
-def deploy(release, install):
+def deploy(release):
     # Set up helm!
     helm('init', '--service-account', 'tiller', '--upgrade')
     kubectl('rollout', 'status', '--watch', 'deployment/tiller-deploy',
@@ -81,28 +81,13 @@ def deploy(release, install):
     with open('hub/config.yaml') as f:
         config = yaml.safe_load(f)
 
-    if install:
-        helm(
-            'install',
-            '--name', release,
-            '--namespace', release,
-            'jupyterhub/jupyterhub',
-            '--version', config['version'],
-            '-f', 'hub/config.yaml',
-            '-f', os.path.join('hub', 'secrets', release + '.yaml'),
-            '--set', 'singleuser.image.tag={}'.format(singleuser_tag)
-        )
-    else:
-        helm(
-            'upgrade', release,
-            'jupyterhub/jupyterhub',
-            '--version', config['version'],
-            '-f', 'hub/config.yaml',
-            '-f', os.path.join('hub', 'secrets', release + '.yaml'),
-            '--set', 'singleuser.image.tag={}'.format(singleuser_tag)
-        )
-
-    subprocess.check_call(helm)
+    helm('upgrade', '--install', '--wait',
+        release, 'jupyterhub/jupyterhub',
+        '--version', config['version'],
+        '-f', 'hub/config.yaml',
+        '-f', os.path.join('hub', 'secrets', release + '.yaml'),
+        '--set', 'singleuser.image.tag={}'.format(singleuser_tag)
+    )
 
 
 def main():
@@ -122,14 +107,15 @@ def main():
     deploy_parser = subparsers.add_parser('deploy',
         description='Deploy with helm')
     deploy_parser.add_argument('release', default='prod')
-    deploy_parser.add_argument('--install', action='store_true')
 
 
     args = argparser.parse_args()
 
+    logging.setLevel('INFO')
+
     if args.action == 'build':
         build_user_image(args.user_image_spec, args.commit_range, args.push)
     else:
-        deploy(args.release, args.install)
+        deploy(args.release)
 
 main()

@@ -6,10 +6,15 @@
 # - DOCKER_PASSWORD
 # - GCLOUD_PROJECT
 # travis project env vars:
-# - encrypted_0f80927fa736_key
-# - encrypted_0f80927fa736_iv
+# - encrypted_b00c78b73ea7_key (created by 'travis encrypt-file')
+# - encrypted_b00c78b73ea7_iv  (created by 'travis encrypt-file')
 
 set -euo pipefail
+
+CLUSTER="prob140-${TRAVIS_BRANCH}"
+
+openssl_key=${encrypted_b00c78b73ea7_key}
+openssl_iv=${encrypted_b00c78b73ea7_iv}
 
 function prepare_gcloud {
     # Install gcloud
@@ -22,46 +27,48 @@ function prepare_gcloud {
     gcloud --quiet components update kubectl
 }
 
-ACTION="${1}"
-PUSH=''
-if [[ ${ACTION} == 'build' ]]; then
-    if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
-        PUSH='--push'
-        # Assume we're in master and have secrets!
-        docker login -u $DOCKER_USERNAME -p "$DOCKER_PASSWORD"
-    fi
+function build {
+	echo "Starting build..."
+	PUSH=''
+	if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
+		PUSH='--push'
+		# Assume we're in master and have secrets!
+		docker login -u $DOCKER_USERNAME -p "$DOCKER_PASSWORD"
+	fi
 
-    # Attempt to improve relability of pip installs:
-    # https://github.com/travis-ci/travis-ci/issues/2389
-    sudo sysctl net.ipv4.tcp_ecn=0
+	# Attempt to improve relability of pip installs:
+	# https://github.com/travis-ci/travis-ci/issues/2389
+	sudo sysctl net.ipv4.tcp_ecn=0
 
-    ./deploy.py build --commit-range ${TRAVIS_COMMIT_RANGE} ${PUSH}
-elif [[ ${ACTION} == 'deploy' ]]; then
-    echo "Starting deploy..."
-    REPO="https://github.com/${TRAVIS_REPO_SLUG}"
-    REMOTE_CHECKOUT_DIR="/tmp/${TRAVIS_BUILD_NUMBER}"
-    COMMIT="${TRAVIS_COMMIT}"
-    MASTER_HOST="datahub-fa17-${TRAVIS_BRANCH}.westus2.cloudapp.azure.com"
-	GCLOUD_CREDS="hub/secrets/gcloud-creds.json"
+	./deploy.py build --commit-range ${TRAVIS_COMMIT_RANGE} ${PUSH}
+}
+
+function deploy {
+	echo "Starting deploy..."
 
 	prepare_gcloud
-    
-    echo "Fetching gcloud service account credentials..."
+	
+	echo "Fetching gcloud service account credentials..."
 	openssl aes-256-cbc \
-		-K $encrypted_b00c78b73ea7_key \
-		-iv $encrypted_b00c78b73ea7_iv \
-		-in git-crypt.key.enc \
-		-out git-crypt.key -d
-    chmod 0400 git-crypt.key
+		-K ${openssl_key} -iv ${openssl_iv} \
+		-in git-crypt.key.enc -out git-crypt.key -d
+	chmod 0400 git-crypt.key
 
-	gcloud auth activate-service-account --key-file ${GCLOUD_CREDS}
-    gcloud config set project ${GCLOUD_PROJECT}
+	git-crypt unlock git-crypt.key
 
-    gcloud container clusters get-credentials $CLOUDSDK_CORE_PROJECT
+	gcloud auth activate-service-account \
+		--key-file hub/secrets/gcloud-creds.json
+	gcloud config set project ${GCLOUD_PROJECT}
 
-    echo "SSHing..."
-	gcloud compute ssh ${MASTER_HOST} \
-        "rm -rf ${REMOTE_CHECKOUT_DIR} && git clone ${REPO} ${REMOTE_CHECKOUT_DIR} && cd ${CHECKOUT_DIR} && git checkout ${COMMIT} && git crypt unlock /etc/deploy-secret-keyfile && ./deploy.py deploy ${TRAVIS_BRANCH} && rm -rf ${REMOTE_CHECKOUT_DIR}"
+	gcloud container clusters get-credentials ${CLUSTER}
 
-    echo "Done!"
-fi
+	./deploy.py deploy ${TRAVIS_BRANCH}
+
+	echo "Done!"
+}
+
+# main
+case $1 in
+	build)  build ;;
+	deploy) deploy ;;
+esac

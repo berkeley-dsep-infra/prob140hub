@@ -11,7 +11,7 @@ cache:
 
 install:
 - pip install --no-cache-dir pyyaml
-- apt install git-crypt
+- sudo apt install git-crypt
 
 script:
 - "./travis/travis-script.bash build"

@@ -10,9 +10,7 @@ cache:
     - "${HOME}/google-cloud-sdk/"
 
 before_install:
-  - pwd
-  - find .
-  - "${TRAVIS_BUILD_DIR}/travis/install-git-crypt.bash"
+  - "./travis/install-git-crypt.bash"
 
 install:
   - pip install --no-cache-dir pyyaml

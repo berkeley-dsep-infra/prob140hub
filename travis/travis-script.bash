@@ -41,6 +41,7 @@ function build {
 	# https://github.com/travis-ci/travis-ci/issues/2389
 	sudo sysctl net.ipv4.tcp_ecn=0
 
+	echo ./deploy.py build --commit-range ${TRAVIS_COMMIT_RANGE} ${PUSH}
 	./deploy.py build --commit-range ${TRAVIS_COMMIT_RANGE} ${PUSH}
 }
 
@@ -64,6 +65,7 @@ function deploy {
 	gcloud container clusters get-credentials --zone=${GCLOUD_ZONE} \
 		${CLUSTER}
 
+	echo ./deploy.py deploy ${TRAVIS_BRANCH}
 	./deploy.py deploy ${TRAVIS_BRANCH}
 
 	echo "Done!"

@@ -1,15 +1,30 @@
 #!/usr/bin/env python3
 # vim: set et nonumber:
+#
+# Originally from
+#  - berkeley-dsep-infra/datahub
+#  - berkeley-dsep-infra/data8xhub
+#
+
 import argparse
+import logging
+import os
 import subprocess
 import yaml
-import os
 
 def git(*args, **kwargs):
     return subprocess.check_output(['git'] + list(args))
 
 def docker(*args, **kwargs):
     return subprocess.check_output(['docker'] + list(args))
+
+def helm(*args, **kwargs):
+    logging.info("Executing helm", ' '.join(args))
+    return subprocess.check_call(['helm'] + list(args), **kwargs)
+
+def kubectl(*args, **kwargs):
+    logging.info("Executing kubectl", ' '.join(args))
+    return subprocess.check_call(['kubectl'] + list(args), **kwargs)
 
 def last_git_modified(path, n=1):
     return git(
@@ -56,7 +71,10 @@ def build_user_image(image_name, commit_range=None, push=False):
 
 def deploy(release, install):
     # Set up helm!
-    subprocess.check_call(['helm', 'repo', 'update'])
+    helm('init', '--service-account', 'tiller', '--upgrade')
+    kubectl('rollout', 'status', '--watch', 'deployment/tiller-deploy',
+        '--namespace=kube-system')
+    helm('repo', 'update')
 
     singleuser_tag = last_git_modified('user-image')
 
@@ -64,8 +82,8 @@ def deploy(release, install):
         config = yaml.safe_load(f)
 
     if install:
-        helm = [
-            'helm', 'install',
+        helm(
+            'install',
             '--name', release,
             '--namespace', release,
             'jupyterhub/jupyterhub',
@@ -73,16 +91,16 @@ def deploy(release, install):
             '-f', 'hub/config.yaml',
             '-f', os.path.join('hub', 'secrets', release + '.yaml'),
             '--set', 'singleuser.image.tag={}'.format(singleuser_tag)
-        ]
+        )
     else:
-        helm = [
-            'helm', 'upgrade', release,
+        helm(
+            'upgrade', release,
             'jupyterhub/jupyterhub',
             '--version', config['version'],
             '-f', 'hub/config.yaml',
             '-f', os.path.join('hub', 'secrets', release + '.yaml'),
             '--set', 'singleuser.image.tag={}'.format(singleuser_tag)
-        ]
+        )
 
     subprocess.check_call(helm)
 
@@ -95,11 +113,14 @@ def main():
     )
     subparsers = argparser.add_subparsers(dest='action')
 
-    build_parser = subparsers.add_parser('build', description='Build & Push images')
-    build_parser.add_argument('--commit-range', help='Range of commits to consider when building images')
+    build_parser = subparsers.add_parser('build',
+        description='Build and push images')
+    build_parser.add_argument('--commit-range',
+        help='Range of commits to consider when building images')
     build_parser.add_argument('--push', action='store_true')
 
-    deploy_parser = subparsers.add_parser('deploy', description='Deploy with helm')
+    deploy_parser = subparsers.add_parser('deploy',
+        description='Deploy with helm')
     deploy_parser.add_argument('release', default='prod')
     deploy_parser.add_argument('--install', action='store_true')
 

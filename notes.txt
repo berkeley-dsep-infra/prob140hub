@@ -29,10 +29,11 @@ helm repo update
 
 
 helm install jupyterhub/jupyterhub \
-    --version=v0.5 \
-    --name=staging \
-    --namespace=staging \
-    -f config.yaml
+	--version=v0.5 \
+	--name=staging \
+	--namespace=staging \
+	-f config.yaml \
+	-f hub/secrets/staging.yaml
 
 
 helm upgrade staging jupyterhub/jupyterhub --version=v0.5 -f config.yaml

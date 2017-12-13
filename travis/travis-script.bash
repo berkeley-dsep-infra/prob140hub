@@ -48,11 +48,12 @@ elif [[ ${ACTION} == 'deploy' ]]; then
     
     echo "Fetching gcloud service account credentials..."
     # Travis only allows encrypting one file per repo. LAME
-    openssl aes-256-cbc \
-		-K $encrypted_0f80927fa736_key \
-		-iv $encrypted_0f80927fa736_iv \
-		-in ${GCLOUD_CREDS}.enc -out ${GCLOUD_CREDS} -d
-    chmod 0400 ${GCLOUD_CREDS}
+	openssl aes-256-cbc \
+		-K $encrypted_b00c78b73ea7_key \
+		-iv $encrypted_b00c78b73ea7_iv \
+		-in git-crypt.key.enc \
+		-out git-crypt.key -d
+    chmod 0400 git-crypt.key
 
 	gcloud auth activate-service-account --key-file ${GCLOUD_CREDS}
     gcloud config set project ${GCLOUD_PROJECT}

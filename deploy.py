@@ -18,16 +18,15 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 def git(*args, **kwargs):
     return subprocess.check_output(['git'] + list(args))
 
-def docker(*args, **kwargs):
-    return subprocess.check_output(['docker'] + list(args))
-
 def helm(*args, **kwargs):
-    logging.info("Executing helm", ' '.join(args))
-    return subprocess.check_call(['helm'] + list(args), **kwargs)
+    arg0 = 'helm'
+    logging.info("Executing " + arg0 + " " + ' '.join(args))
+    return subprocess.check_call([arg0] + list(args), **kwargs)
 
 def kubectl(*args, **kwargs):
-    logging.info("Executing kubectl", ' '.join(args))
-    return subprocess.check_call(['kubectl'] + list(args), **kwargs)
+    arg0 = 'kubectl'
+    logging.info("Executing " + arg0 + " " + ' '.join(args))
+    return subprocess.check_call([arg0] + list(args), **kwargs)
 
 def last_git_modified(path, n=1):
     return git(
@@ -77,6 +76,8 @@ def deploy(release):
     helm('init', '--service-account', 'tiller', '--upgrade')
     kubectl('rollout', 'status', '--watch', 'deployment/tiller-deploy',
         '--namespace=kube-system')
+    helm('repo', 'add', 'jupyterhub',
+        'https://jupyterhub.github.io/helm-chart/')
     helm('repo', 'update')
 
     singleuser_tag = last_git_modified('user-image')

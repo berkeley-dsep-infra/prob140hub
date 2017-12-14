@@ -1,22 +1,19 @@
 #!/bin/bash
 # This script is used by travis to trigger deployments or builds
 
-# .travis.yml env vars:
-# - DOCKER_PASSWORD
-# - DOCKER_USERNAME
-# - GCLOUD_PROJECT
+# .travis.yml:
+# - DOCKER_PASSWORD (secure)
+# - DOCKER_USERNAME (secure)
 # - GCLOUD_ZONE
 # - HUB_COURSE
-# travis project env vars:
+# travis project settings:
 # - encrypted_b00c78b73ea7_key (created by 'travis encrypt-file')
 # - encrypted_b00c78b73ea7_iv  (created by 'travis encrypt-file')
+# - GCLOUD_PROJECT (manual)
 
 set -euo pipefail
 
 CLUSTER="${HUB_COURSE}-${TRAVIS_BRANCH}"
-
-openssl_key=${encrypted_b00c78b73ea7_key}
-openssl_iv=${encrypted_b00c78b73ea7_iv}
 
 function prepare_gcloud {
     # Install gcloud
@@ -33,6 +30,7 @@ function prepare_gcloud {
 function build {
 	echo "Starting build..."
 	PUSH=''
+
 	if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
 		PUSH='--push'
 		# Assume we have secrets!
@@ -52,9 +50,12 @@ function deploy {
 
 	prepare_gcloud
 
+	# Encrypted variables are only set when we are not a PR
+	# https://docs.travis-ci.com/user/pull-requests/#Pull-Requests-and-Security-Restrictions
 	echo "Fetching gcloud service account credentials..."
 	openssl aes-256-cbc \
-		-K ${openssl_key} -iv ${openssl_iv} \
+		-K ${encrypted_b00c78b73ea7_key} \
+        -iv ${encrypted_b00c78b73ea7_iv} \
 		-in git-crypt.key.enc -out git-crypt.key -d
 	chmod 0400 git-crypt.key
 

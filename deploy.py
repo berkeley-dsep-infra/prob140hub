@@ -10,7 +10,10 @@ import argparse
 import logging
 import os
 import subprocess
+import sys
 import yaml
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 def git(*args, **kwargs):
     return subprocess.check_output(['git'] + list(args))
@@ -110,8 +113,6 @@ def main():
 
 
     args = argparser.parse_args()
-
-    logging.setLevel('INFO')
 
     if args.action == 'build':
         build_user_image(args.user_image_spec, args.commit_range, args.push)

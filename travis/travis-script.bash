@@ -24,7 +24,9 @@ function prepare_gcloud {
         export CLOUDSDK_CORE_DISABLE_PROMPTS=1
         curl https://sdk.cloud.google.com | bash
     fi
-    source ${HOME}/google-cloud-sdk/path.bash.inc
+    source ${HOME}/google-cloud-sdk/path.bash.inc > /dev/null
+	
+    gcloud --quiet components update kubectl
 }
 
 function build {
@@ -47,10 +49,8 @@ function build {
 function deploy {
 	echo "Starting deploy..."
 
-	# prepare_gcloud
+	prepare_gcloud
 
-    gcloud --quiet components update kubectl
-	
 	echo "Fetching gcloud service account credentials..."
 	openssl aes-256-cbc \
 		-K ${openssl_key} -iv ${openssl_iv} \

@@ -16,7 +16,7 @@ hub:
       def start(self):
         with open('/etc/jupyterhub/config/custom.memory') as f:
           custom_attr_lists = yaml.safe_load(f)
-          for mem, users in custom_attr_lists.items():
+          for attr, users in custom_attr_lists.items():
             if self.user.name in users:
               self.mem_limit = attr
               self.mem_guarantee = attr

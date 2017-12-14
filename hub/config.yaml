@@ -4,8 +4,6 @@ rbac:
   enabled: true
 
 hub:
-  #db:
-  #  type: postgres
   extraConfig: |
     from kubespawner import KubeSpawner
     from tornado import gen
@@ -32,8 +30,22 @@ hub:
         return (yield super().start())
     c.JupyterHub.spawner_class = CustomKubeSpawner
 
+cull:
+  enabled: false
+  timeout: 3600
+
 auth:
   type: google
+  admin:
+    users:
+      # infrastructure
+      - rylo
+      - yuvipanda
+      # sp18 prob140 Professors
+      - adhikari
+      # sp18 prob140 GSIs
+      - dibya.ghosh
+      - zhang.j
 
 singleuser:
   memory:
@@ -45,13 +57,3 @@ singleuser:
   storage:
     capacity: 2Gi
 
-admin:
-  users:
-    # infrastructure
-    - rylo
-    - yuvipanda
-    # sp18 prob140 Professors
-    - adhikari
-    # sp18 prob140 GSIs
-    - dibya.ghosh
-    - zhang.j

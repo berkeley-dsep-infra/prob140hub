@@ -1,9 +1,9 @@
 # base
-notebook==5.1.0
+notebook==5.2.2
 jupyterhub==0.8.1
 widgetsnbextension==3.1.0rc1
 ipywidgets==6.0.0
-jupyterlab==0.30.2
+jupyterlab==0.30.6
 #
 # data8; foundation
 datascience==0.10.1

@@ -25,7 +25,6 @@ function prepare_gcloud {
         curl https://sdk.cloud.google.com | bash
     fi
     source ${HOME}/google-cloud-sdk/path.bash.inc
-    gcloud --quiet components update kubectl
 }
 
 function build {
@@ -48,7 +47,9 @@ function build {
 function deploy {
 	echo "Starting deploy..."
 
-	prepare_gcloud
+	# prepare_gcloud
+
+    gcloud --quiet components update kubectl
 	
 	echo "Fetching gcloud service account credentials..."
 	openssl aes-256-cbc \

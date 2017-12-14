@@ -9,9 +9,6 @@ RELEASE="https://github.com/AGWA/git-crypt/archive/0.6.0.tar.gz"
 TARBALL="$(basename ${RELEASE})"
 SRC_DIR="git-crypt-${TARBALL/.tar.gz/}"
 
-sudo apt-get -qq update
-sudo apt-get -y  install libssl-dev
-
 cd /tmp
 curl -LO ${RELEASE}
 tar xzf ${TARBALL}

@@ -2,9 +2,10 @@
 # This script is used by travis to trigger deployments or builds
 
 # .travis.yml env vars:
-# - DOCKER_USERNAME
 # - DOCKER_PASSWORD
+# - DOCKER_USERNAME
 # - GCLOUD_PROJECT
+# - GCLOUD_ZONE
 # - HUB_COURSE
 # travis project env vars:
 # - encrypted_b00c78b73ea7_key (created by 'travis encrypt-file')
@@ -49,7 +50,7 @@ function build {
 function deploy {
 	echo "Starting deploy..."
 
-	prepare_gcloud
+	#prepare_gcloud
 
 	echo "Fetching gcloud service account credentials..."
 	openssl aes-256-cbc \

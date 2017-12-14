@@ -10,6 +10,8 @@ cache:
     - "${HOME}/google-cloud-sdk/"
 
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y kubectl
   - "./travis/install-git-crypt.bash"
   - "./travis/install-helm.bash"
 

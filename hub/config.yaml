@@ -31,8 +31,8 @@ hub:
     c.JupyterHub.spawner_class = CustomKubeSpawner
 
 cull:
-  enabled: false
-  timeout: 3600
+  enabled: true
+  timeout: 3600 # default
 
 auth:
   type: google

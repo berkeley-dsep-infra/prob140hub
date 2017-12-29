@@ -43,9 +43,9 @@ hub:
                       'values': ['singleuser-server']
                     }
                   ]
-                },
-                'topologyKey': 'kubernetes.io/hostname'
-              }
+                }
+              },
+              'topologyKey': 'kubernetes.io/hostname'
             }
           ],
         }

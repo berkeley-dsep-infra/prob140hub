@@ -32,9 +32,8 @@ hub:
     c.CustomKubeSpawner.singleuser_extra_pod_config = {
       'affinity': {
         'podAffinity': {
-          'preferredDuringSchedulingIgnoredDuringExecution': [
+          'requiredDuringSchedulingIgnoredDuringExecution': [
             {
-              'weight': 50,
               'podAffinityTerm': {
                 'labelSelector': {
                   'matchExpressions': [

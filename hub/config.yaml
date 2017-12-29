@@ -34,18 +34,21 @@ hub:
         'podAffinity': {
           'preferredDuringSchedulingIgnoredDuringExecution': [
             {
-              'labelSelector': {
-                'matchExpressions': [
-                  {
-                    'key': 'component',
-                    'operator': 'In',
-                    'values': ['singleuser-server']
-                  }
-                ]
+              'weight': 50,
+              'podAffinityTerm': {
+                'labelSelector': {
+                  'matchExpressions': [
+                    {
+                      'key': 'component',
+                      'operator': 'In',
+                      'values': ['singleuser-server']
+                    }
+                  ]
+                },
+                'topologyKey': 'kubernetes.io/hostname'
               }
             }
           ],
-          'topologyKey': 'kubernetes.io/hostname'
         }
       }
     }

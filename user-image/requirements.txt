@@ -20,5 +20,5 @@ git+https://github.com/data-8/nbresuse.git@2f9144f
 # prob140; 
 wheel==0.30.0
 sympy==1.1.1
-prob140==0.3.0.0
+prob140==0.3.1.0
 #

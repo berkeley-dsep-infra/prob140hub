@@ -1,20 +1,19 @@
 # base
 notebook==5.2.2
 jupyterhub==0.8.1
-widgetsnbextension==3.1.0rc1
-ipywidgets==6.0.0
-jupyterlab==0.30.6
+widgetsnbextension==3.1.0
+ipywidgets==7.1.0
+jupyterlab==0.31.6
 #
 # data8; foundation
-datascience==0.10.1
-matplotlib==2.0.0
-numpy==1.12.1
-pandas==0.19.2
-scipy==0.19.1
+datascience==0.10.3
+matplotlib==2.1.1
+numpy==1.14.0
+pandas==0.22.0
+scipy==1.0.0
 statsmodels==0.8.0
-okpy==1.12.5
-cython==0.25.2
-numpy==1.12.1
+okpy==1.13.9
+cython==0.27.3
 nbgitpuller==0.3
 git+https://github.com/data-8/nbresuse.git@2f9144f
 #

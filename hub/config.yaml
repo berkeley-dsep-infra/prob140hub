@@ -52,30 +52,15 @@ hub:
         }
       }
     }
-#          'requiredDuringSchedulingIgnoredDuringExecution': [
-#            {
-#              'podAffinityTerm': {
-#                'labelSelector': {
-#                  'matchExpressions': [
-#                    {
-#                      'key': 'component',
-#                      'operator': 'In',
-#                      'values': ['singleuser-server']
-#                    }
-#                  ]
-#                }
-#              },
-#              'topologyKey': 'kubernetes.io/hostname'
-#            }
-#          ],
-
 
 cull:
   enabled: true
   timeout: 3600 # default
 
 auth:
-  type: google
+  type: dummy
+    password: "wat"
+  #type: google
   admin:
     users:
       # infrastructure
@@ -93,6 +78,5 @@ singleuser:
     limit: 1G
   image:
     name: "berkeleydsep/singleuser-prob140"
-#    tag: "7128821"
   storage:
     capacity: 2Gi

@@ -52,23 +52,6 @@ hub:
         }
       }
     }
-#          'requiredDuringSchedulingIgnoredDuringExecution': [
-#            {
-#              'podAffinityTerm': {
-#                'labelSelector': {
-#                  'matchExpressions': [
-#                    {
-#                      'key': 'component',
-#                      'operator': 'In',
-#                      'values': ['singleuser-server']
-#                    }
-#                  ]
-#                }
-#              },
-#              'topologyKey': 'kubernetes.io/hostname'
-#            }
-#          ],
-
 
 cull:
   enabled: true

@@ -59,7 +59,7 @@ cull:
 
 auth:
   type: dummy
-    passord: "wat"
+    password: "wat"
   #type: google
   admin:
     users:
@@ -78,6 +78,5 @@ singleuser:
     limit: 1G
   image:
     name: "berkeleydsep/singleuser-prob140"
-#    tag: "7128821"
   storage:
     capacity: 2Gi

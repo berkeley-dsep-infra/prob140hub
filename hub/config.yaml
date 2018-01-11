@@ -59,7 +59,6 @@ cull:
 
 auth:
   type: dummy
-    password: "wat"
   #type: google
   admin:
     users:

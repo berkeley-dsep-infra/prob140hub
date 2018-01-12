@@ -14,6 +14,7 @@ spec:
           containers:
           - name: avoid-pod
             image: berkeleydsep/avoid_pod:d52b8a2
+            tty: true
             resources:
               requests:
                 # node's spec:status:allocatable:memory, minus one user pod

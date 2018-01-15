@@ -58,8 +58,8 @@ cull:
   timeout: 3600 # default
 
 auth:
-  type: dummy
-  #type: google
+  #type: dummy
+  type: google
   admin:
     users:
       # infrastructure

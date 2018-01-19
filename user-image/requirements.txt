@@ -23,3 +23,5 @@ sympy==1.1.1
 prob140==0.3.2.0
 gsExport==0.9.9
 #
+# downgrade nbconvert
+nbconvert<5

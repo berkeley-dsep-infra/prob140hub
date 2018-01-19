@@ -29,35 +29,36 @@ hub:
 
         return (yield super().start())
     c.JupyterHub.spawner_class = CustomKubeSpawner
-#    c.CustomKubeSpawner.singleuser_extra_pod_config = {
-#      'affinity': {
-#        'podAffinity': {
-#          'requiredDuringSchedulingIgnoredDuringExecution': [
-#            {
-#              'podAffinityTerm': {
-#                'labelSelector': {
-#                  'matchExpressions': [
-#                    {
-#                      'key': 'component',
-#                      'operator': 'In',
-#                      'values': ['singleuser-server']
-#                    }
-#                  ]
-#                }
-#              },
-#              'topologyKey': 'kubernetes.io/hostname'
-#            }
-#          ],
-#        }
-#      }
-#    }
-
+    c.CustomKubeSpawner.singleuser_extra_pod_config = {
+      'affinity': {
+        'podAffinity': {
+          'preferredDuringSchedulingIgnoredDuringExecution': [
+            {
+              'weight': 100,
+              'podAffinityTerm': {
+                'labelSelector': {
+                  'matchExpressions': [
+                    {
+                      'key': 'component',
+                      'operator': 'In',
+                      'values': ['singleuser-server']
+                    }
+                  ]
+                },
+                'topologyKey': 'kubernetes.io/hostname'
+              }
+            }
+          ],
+        }
+      }
+    }
 
 cull:
   enabled: true
   timeout: 3600 # default
 
 auth:
+  #type: dummy
   type: google
   admin:
     users:
@@ -76,6 +77,5 @@ singleuser:
     limit: 1G
   image:
     name: "berkeleydsep/singleuser-prob140"
-#    tag: "7128821"
   storage:
     capacity: 2Gi

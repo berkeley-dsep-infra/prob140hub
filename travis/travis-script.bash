@@ -68,7 +68,7 @@ function deploy {
 	gcloud container clusters get-credentials --zone=${GCLOUD_ZONE} \
 		${CLUSTER}
 
-	echo trevis_retry ./deploy.py deploy ${TRAVIS_BRANCH}
+	echo travis_retry ./deploy.py deploy ${TRAVIS_BRANCH}
 	travis_retry ./deploy.py deploy ${TRAVIS_BRANCH}
 
 	echo "Done!"

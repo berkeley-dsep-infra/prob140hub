@@ -2,8 +2,9 @@
 
 # Install helm.
 
-set -euo pipefail
+set -xeuo pipefail
 
 URL="https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get"
 
-curl ${URL} | sudo bash
+curl -o /tmp/helm.bash ${URL}
+sudo bash /tmp/helm.bash --version v2.8.0
